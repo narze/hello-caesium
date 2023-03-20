@@ -14,7 +14,17 @@
 
   function updateGeolocationState() {
     if (navigator.permissions) {
+
       navigator.permissions.query({name:'geolocation'}).then(function(result) {
+        result.onchange = function() {
+          console.log(this)
+          geolocationState = this.state
+
+          if (this.state === 'granted') {n
+            navigator.geolocation.getCurrentPosition(setPosition)
+          }
+        }
+
         geolocationState = result.state
 
         if (result.state === 'granted') {
