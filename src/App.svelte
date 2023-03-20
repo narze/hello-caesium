@@ -8,6 +8,16 @@
   let latitude
   let longitude
 
+  const options = {
+    enableHighAccuracy: true,
+    timeout: 7000,
+    maximumAge: 0
+  };
+
+  function onError(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+  }
+
   onMount(() => {
     updateGeolocationState()
   })
@@ -21,7 +31,7 @@
           geolocationState = this.state
 
           if (this.state === 'granted') {n
-            navigator.geolocation.getCurrentPosition(setPosition)
+            navigator.geolocation.getCurrentPosition(setPosition, onError, options)
           }
         }
 
@@ -29,7 +39,7 @@
 
         if (result.state === 'granted') {
           // geolocation permission has been granted
-          navigator.geolocation.getCurrentPosition(setPosition)
+          navigator.geolocation.getCurrentPosition(setPosition, onError, options)
         } else if (result.state === 'prompt') {
           // geolocation permission has not been granted, but the user may be prompted
         } else {
@@ -44,7 +54,7 @@
 
   function grantLocation() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(updateGeolocationState);
+      navigator.geolocation.getCurrentPosition(updateGeolocationState, onError, options);
     } else {
       alert("Geolocation is not supported by this browser.");
     }
@@ -119,6 +129,23 @@
     const url = `https://www.google.com/maps/@${lat},${lng},${zoomLevel}z?hl=en&maptype=${mapType}`;
     return url;
   }
+
+  function isSafari() {
+    // Check if the browser is Safari
+    if (navigator.userAgent.indexOf('Safari') !== -1 && navigator.userAgent.indexOf('Chrome') === -1) {
+      // Browser is Safari
+      return true
+    }
+
+    // Check if the browser is Mobile Safari
+    if (navigator.userAgent.match(/(iPod|iPhone|iPad)/) && navigator.userAgent.indexOf('AppleWebKit') !== -1) {
+      // Browser is Mobile Safari
+      return true
+    }
+
+    return false
+  }
+
 </script>
 
 <main>
@@ -127,6 +154,9 @@
   <p>ค้นหาซีเซียม-137 ใกล้คุณ</p>
 
   <div class="card">
+    {#if isSafari()}
+      <div style="margin-bottom: 1rem;">(แอปอาจไม่ทำงานบน Safari โปรดใช้บราวเซอร์อื่น หรือช่วยแก้โค้ดให้ใช้ได้บน Safari <a href="https://github.com/narze/hello-caesium">https://github.com/narze/hello-caesium</a>)</div>
+    {/if}
     {#if !navigator.geolocation}
       <h2>บราวเซอร์ไม่รองรับ Geolocation</h2>
     {:else if geolocationState == "prompt"}
