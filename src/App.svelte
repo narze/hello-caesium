@@ -133,6 +133,8 @@
     {/if}
   </div>
 
+  <p class="footer">Disclaimer: This is just for fun, please read some news, don't panic (yet.)</p>
+
 </main>
 
 <style>
@@ -150,6 +152,14 @@
   }
   .read-the-docs {
     color: #888;
+  }
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 10px;
   }
 
   .rainbow {
