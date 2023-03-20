@@ -9,6 +9,10 @@
   let longitude
 
   onMount(() => {
+    updateGeolocationState()
+  })
+
+  function updateGeolocationState() {
     if (navigator.permissions) {
       navigator.permissions.query({name:'geolocation'}).then(function(result) {
         geolocationState = result.state
@@ -26,11 +30,11 @@
       // geolocation permission is not supported by this browser
       alert("บราวเซอร์ไม่รองรับ")
     }
-  })
+  }
 
   function grantLocation() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(setPosition);
+      navigator.geolocation.getCurrentPosition(updateGeolocationState);
     } else {
       alert("Geolocation is not supported by this browser.");
     }
