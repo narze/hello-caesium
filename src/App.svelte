@@ -30,7 +30,7 @@
           console.log(this)
           geolocationState = this.state
 
-          if (this.state === 'granted') {n
+          if (this.state === 'granted') {
             navigator.geolocation.getCurrentPosition(setPosition, onError, options)
           }
         }
