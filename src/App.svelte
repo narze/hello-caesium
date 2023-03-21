@@ -30,17 +30,21 @@
           console.log(this)
           geolocationState = this.state
 
-          if (this.state === 'granted') {n
+          if (this.state === 'granted') {
             navigator.geolocation.getCurrentPosition(setPosition, onError, options)
           }
         }
 
         geolocationState = result.state
-
+        console.log(result.state)
         if (result.state === 'granted') {
           // geolocation permission has been granted
           navigator.geolocation.getCurrentPosition(setPosition, onError, options)
         } else if (result.state === 'prompt') {
+          // if browser is safari, state will always be prompt. So we need to get current position anyway.
+          if (isSafariMobile()) {
+            navigator.geolocation.getCurrentPosition(setPosition, onError, options)
+          }
           // geolocation permission has not been granted, but the user may be prompted
         } else {
           // geolocation permission has not been granted
@@ -136,13 +140,15 @@
       // Browser is Safari
       return true
     }
+    return false
+  }
 
+  function isSafariMobile() {
     // Check if the browser is Mobile Safari
     if (navigator.userAgent.match(/(iPod|iPhone|iPad)/) && navigator.userAgent.indexOf('AppleWebKit') !== -1) {
       // Browser is Mobile Safari
       return true
     }
-
     return false
   }
 
@@ -154,14 +160,14 @@
   <p>ค้นหาซีเซียม-137 ใกล้คุณ</p>
 
   <div class="card">
-    {#if isSafari()}
+    {#if isSafari() || isSafariMobile()}
       <div style="margin-bottom: 1rem;">(แอปอาจไม่ทำงานบน Safari โปรดใช้บราวเซอร์อื่น หรือช่วยแก้โค้ดให้ใช้ได้บน Safari <a href="https://github.com/narze/hello-caesium">https://github.com/narze/hello-caesium</a>)</div>
     {/if}
     {#if !navigator.geolocation}
       <h2>บราวเซอร์ไม่รองรับ Geolocation</h2>
-    {:else if geolocationState == "prompt"}
+    {:else if geolocationState == "prompt" && !isSafariMobile()}
       <button on:click={grantLocation}>ขอ Location</button>
-    {:else if geolocationState == "granted"}
+    {:else if geolocationState == "granted" || isSafariMobile()}
       <!--<div>Latitude: {latitude}</div>
       <div>Longitude: {longitude}</div>-->
       {@const diffInKm = getDistanceFromLatLonInKm(latitude, longitude, 13.9215457, 101.5806728).toFixed(3)}
